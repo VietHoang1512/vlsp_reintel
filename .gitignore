@@ -1,4 +1,7 @@
-*.csv
+# *.csv
+**/transformers
+**/vncorenlp
+**/wandb
 
 led / optimized / DLL files
 __pycache__/
