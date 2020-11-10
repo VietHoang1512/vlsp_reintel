@@ -1,7 +1,0 @@
-,,,,,,,
-Experiment,Description,Fold_1,Fold_2,Fold_3,Fold_4,Fold_5,
-roberta_256,"cls embedding, 5 folds, 256 len",0.95177,0.95183,0.96539,0.94426,0.94216,
-roberta_384,"cls embedding, 5 folds, 384 len",0.94733,0.95084,0.96454,0.94363,,
-,,,,,,,
-,,,,,,,
-,,,,,,,

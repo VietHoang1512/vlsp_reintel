@@ -4,13 +4,13 @@ import numpy as np
 AUTO = tf.data.experimental.AUTOTUNE
 
 
-def regular_encode(texts, bert_tokenizer, maxlen=256):
+def regular_encode(texts, bert_tokenizer, max_len=256):
 
     bert_enc_di = bert_tokenizer.batch_encode_plus(
         texts,
         return_token_type_ids=True,
-        pad_to_max_length=True,
-        max_length=maxlen,
+        padding='max_length',
+        max_length=max_len,
         truncation=True,
     )
 
@@ -22,12 +22,12 @@ def regular_encode(texts, bert_tokenizer, maxlen=256):
     return bert_enc
 
 
-def data_generator(train_df, val_df, bert_tokenizer, batch_size=32):
+def data_generator(train_df, val_df, bert_tokenizer, max_len, batch_size=32):
 
-    X_train = regular_encode(train_df["post_message"].values, bert_tokenizer)
+    X_train = regular_encode(train_df["post_message"].values, bert_tokenizer, max_len)
     # y_train = tf.keras.utils.to_categorical(train_df['Label'].values, num_classes=2)
     y_train = train_df["label"].values
-    X_val = regular_encode(val_df["post_message"].values, bert_tokenizer)
+    X_val = regular_encode(val_df["post_message"].values, bert_tokenizer, max_len)
     # y_val = tf.keras.utils.to_categorical(val_df['Label'].values, num_classes=2)
     y_val = val_df["label"].values
 
