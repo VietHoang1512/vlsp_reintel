@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import random
 from tqdm import tqdm
+from data.tokenizer import VnCoreTokenizer
 
 def seed_all(seed):
     np.random.seed(seed)
@@ -23,15 +24,21 @@ def kfold_split(train_df, n_folds):
     return train_df
 
 if __name__=="__main__":
-    n_folds = 5
-    warmup_train_df = pd.read_excel("../data/raw_data/warmup_training_dataset.xlsx", index_col="id")
-    warmup_test_df = pd.read_excel("../data/raw_data/warmup_test_set.xlsx", index_col="id")
+    vncore_tokenizer = VnCoreTokenizer()
+    # n_folds = 5
+    # warmup_train_df = pd.read_excel("/home/leonard/leonard/nlp/ReINTEL/data/raw_data/warmup_training_dataset.xlsx", index_col="id")
+    # warmup_test_df = pd.read_excel("/home/leonard/leonard/nlp/ReINTEL/data/raw_data/warmup_test_set.xlsx", index_col="id")
 
-    public_train_df = pd.read_csv("../data/raw_data/public_train.csv")
-    public_test_df = pd.read_csv("../data/raw_data/public_test.csv")
-
+    # public_train_df = pd.read_csv("/home/leonard/leonard/nlp/ReINTEL/data/raw_data/public_train.csv")
+    # public_test_df = pd.read_csv("/home/leonard/leonard/nlp/ReINTEL/data/raw_data/public_test.csv")
+    private_test_df = pd.read_csv("/home/leonard/leonard/nlp/ReINTEL/data/final_data/final_private_test_dropped_no_label - final_private_test_dropped_no_label.csv")
     # TODO: make use of warmup_test_df
-    train_df = pd.concat([warmup_train_df, public_train_df]).drop_duplicates()
-    train_df = kfold_split(train_df, n_folds=5)
-    train_df.to_csv(f'../data/train_{n_folds}_folds.csv', index=False)
-    public_test_df.to_csv(f'../data/test.csv')
+    # train_df = pd.concat([warmup_train_df, public_train_df]).drop_duplicates()
+    # train_df = kfold_split(train_df, n_folds=5)
+    # train_df["post_message"] = train_df["post_message"].astype(str).apply(vncore_tokenizer.tokenize)
+    # public_test_df["post_message"] = public_test_df["post_message"].astype(str).apply(vncore_tokenizer.tokenize)
+    private_test_df["post_message"] = private_test_df["post_message"].astype(str).apply(vncore_tokenizer.tokenize)
+    
+    # train_df.to_csv(f'/home/leonard/leonard/nlp/ReINTEL/data/tokenized_data/train_{n_folds}_folds.csv', index=False)
+    # public_test_df.to_csv(f'/home/leonard/leonard/nlp/ReINTEL/data/tokenized_data/test.csv')
+    private_test_df.to_csv(f'/home/leonard/leonard/nlp/ReINTEL/data/final_data/private_test.csv')

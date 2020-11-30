@@ -9,3 +9,4 @@ cls embedding, 5 folds, 256 len, auxiliary variables, no reduce_lr |5-folds|0.95
 cls embedding, 4 hiddens embedding, auxiliary variables, 5 folds, 256 len |5-folds|0.93830|0.93446|    |    |    |  
  pooled output embedding, auxiliary variables, 5 folds, 256 len|5-folds|0.93877|0.95207|0.95507|0.92468|0.95513|0.926533
   |    |0.93640|    |0.94749|0.94390|0.95887|0.929991|  
+  seed = 1|    | 0.94941| 0.95266 |0.96144|0.94472|0.95867|    |  

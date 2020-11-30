@@ -2,6 +2,9 @@
 **/transformers
 **/vncorenlp
 **/wandb
+bert/
+transformers
+EDA.ipynb
 
 led / optimized / DLL files
 __pycache__/
