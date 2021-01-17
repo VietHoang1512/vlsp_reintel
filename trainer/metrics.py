@@ -1,6 +1,6 @@
 import os
 import sys
-import tensorflow as tf
+
 from tensorflow.keras import backend as K
 
 label_map = {"UNINFORMATIVE": 0, "INFORMATIVE": 1}

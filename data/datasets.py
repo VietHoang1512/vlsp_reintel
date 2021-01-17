@@ -1,5 +1,5 @@
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 
 AUTO = tf.data.experimental.AUTOTUNE
 
@@ -9,7 +9,7 @@ def regular_encode(df, bert_tokenizer, max_len):
     bert_enc_di = bert_tokenizer.batch_encode_plus(
         df["post_message"].values,
         return_token_type_ids=True,
-        padding='max_length',
+        padding="max_length",
         max_length=max_len,
         truncation=True,
     )

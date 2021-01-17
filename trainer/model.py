@@ -1,5 +1,6 @@
 import tensorflow as tf
-from transformers import TFAutoModel, AutoConfig
+
+from transformers import AutoConfig, TFAutoModel
 
 
 def scheduler(epoch):
@@ -7,7 +8,9 @@ def scheduler(epoch):
 
 
 def build_model(bert_model_name_or_path, max_len=384, n_hiddens=-1):
-    config = AutoConfig.from_pretrained(bert_model_name_or_path, output_attentions=True,output_hidden_states=True,use_cache=True)
+    config = AutoConfig.from_pretrained(
+        bert_model_name_or_path, output_attentions=True, output_hidden_states=True, use_cache=True
+    )
     bert_model = TFAutoModel.from_config(config)
 
     bert_input_word_ids = tf.keras.layers.Input(shape=(max_len,), dtype=tf.int32, name="bert_input_id")

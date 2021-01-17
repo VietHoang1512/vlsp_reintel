@@ -1,6 +1,7 @@
-from vncorenlp import VnCoreNLP
 import logging
 import re
+
+from vncorenlp import VnCoreNLP
 
 # Disable all child loggers of urllib3, e.g. urllib3.connectionpool
 logging.getLogger("urllib3").propagate = False

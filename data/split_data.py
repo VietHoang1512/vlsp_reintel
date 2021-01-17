@@ -1,16 +1,10 @@
-import os
-import numpy as np
-import pandas as pd
 import random
+
+import pandas as pd
 from tqdm import tqdm
+
 from data.tokenizer import VnCoreTokenizer
-
-
-def seed_all(seed):
-    np.random.seed(seed)
-    random.seed(seed)
-    os.environ["PYTHONHASHSEED"] = str(seed)
-
+from data.utils import seed_all
 
 seed = 1512
 seed_all(seed)
@@ -45,6 +39,6 @@ if __name__ == "__main__":
     # public_test_df["post_message"] = public_test_df["post_message"].astype(str).apply(vncore_tokenizer.tokenize)
     private_test_df["post_message"] = private_test_df["post_message"].astype(str).apply(vncore_tokenizer.tokenize)
 
-    # train_df.to_csv(f'../data/tokenized_data/train_{n_folds}_folds.csv', index=False)
-    # public_test_df.to_csv(f'../data/tokenized_data/test.csv')
-    private_test_df.to_csv(f"../data/final_data/private_test.csv")
+    # train_df.to_csv('../data/tokenized_data/train_{n_folds}_folds.csv', index=False)
+    # public_test_df.to_csv('../data/tokenized_data/test.csv')
+    private_test_df.to_csv("../data/final_data/private_test.csv")
