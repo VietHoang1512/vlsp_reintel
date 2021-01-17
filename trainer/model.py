@@ -1,19 +1,18 @@
 import tensorflow as tf
-from transformers import TFAutoModel
+from transformers import TFAutoModel, AutoConfig
 
 
-def build_model(bert_model_name_or_path="vinai/phobert-base", max_len=384, n_hiddens=4):
-    bert_model = TFAutoModel.from_pretrained(bert_model_name_or_path)
+def scheduler(epoch):
+    return 3e-5 * 0.2 ** epoch
 
-    bert_input_word_ids = tf.keras.layers.Input(
-        shape=(max_len,), dtype=tf.int32, name="bert_input_id"
-    )
-    bert_attention_mask = tf.keras.layers.Input(
-        shape=(max_len,), dtype=tf.int32, name="bert_attention_mask"
-    )
-    bert_token_type_ids = tf.keras.layers.Input(
-        shape=(max_len,), dtype=tf.int32, name="bert_token_type_ids"
-    )
+
+def build_model(bert_model_name_or_path, max_len=384, n_hiddens=-1):
+    config = AutoConfig.from_pretrained(bert_model_name_or_path, output_attentions=True,output_hidden_states=True,use_cache=True)
+    bert_model = TFAutoModel.from_config(config)
+
+    bert_input_word_ids = tf.keras.layers.Input(shape=(max_len,), dtype=tf.int32, name="bert_input_id")
+    bert_attention_mask = tf.keras.layers.Input(shape=(max_len,), dtype=tf.int32, name="bert_attention_mask")
+    bert_token_type_ids = tf.keras.layers.Input(shape=(max_len,), dtype=tf.int32, name="bert_token_type_ids")
 
     bert_sequence_output = bert_model(
         bert_input_word_ids,
@@ -21,32 +20,33 @@ def build_model(bert_model_name_or_path="vinai/phobert-base", max_len=384, n_hid
         token_type_ids=bert_token_type_ids,
         output_hidden_states=True,
         output_attentions=True,
-        
     )
-
-    # print(len(bert_sequence_output)) # 4
-
-    # print(bert_sequence_output[0].shape) # (None, max_len, 768)
-
-    # print(bert_sequence_output[1].shape) # (None, 768)
-    # print(len(bert_sequence_output[2])) # 13
-    # print(bert_sequence_output[2][0].shape) # (None, max_len, 768)
-    # print(len(bert_sequence_output[3])) # 12
-    # print(bert_sequence_output[3][0].shape) # (None, 12, None, max_len)
 
     # TODO: get bert embedding
 
     if n_hiddens == -1:  # get [CLS] token embedding only
-        # print("Get pooler output of shape (batch_size, hidden_size)")
+        print("Get pooler output of shape (batch_size, hidden_size)")
         bert_sequence_output = bert_sequence_output[0][:, 0, :]
+    #         bert_sequence_output = bert_sequence_output[1]
     else:  # concatenate n_hiddens final layer
-        # print(f"Concatenate {n_hiddens} hidden_states of shape (batch_size, hidden_size)")
-        bert_sequence_output = tf.concat(
-            [bert_sequence_output[2][-i] for i in range(n_hiddens)], axis=-1)
+        print(f"Concatenate {n_hiddens} hidden_states of shape (batch_size, hidden_size)")
+        bert_sequence_output = tf.concat([bert_sequence_output[2][-i] for i in range(n_hiddens)], axis=-1)
+        bert_sequence_output = bert_sequence_output[:, 0, :]
 
-    # print("bert_sequence_output shape", bert_sequence_output.shape)
+    #     bert_output = tf.keras.layers.Flatten()(bert_sequence_output)
+    bert_output = tf.keras.layers.Dense(8, activation="relu")(bert_sequence_output)
+    #     print(bert_output.shape)
 
-    out = tf.keras.layers.Flatten()(bert_sequence_output)
+    timestamp_post = tf.keras.layers.Input(shape=(1,), dtype=tf.float32, name="timestamp_post")
+    num_like_post = tf.keras.layers.Input(shape=(1,), dtype=tf.float32, name="num_like_post")
+    num_comment_post = tf.keras.layers.Input(shape=(1,), dtype=tf.float32, name="num_comment_post")
+    num_share_post = tf.keras.layers.Input(shape=(1,), dtype=tf.float32, name="num_share_post")
+
+    aulixiary_info = tf.keras.layers.Concatenate()([timestamp_post, num_like_post, num_comment_post, num_share_post])
+    #     aulixiary_output  = tf.keras.layers.GaussianNoise(0.2)(aulixiary_info)
+
+    out = tf.keras.layers.Concatenate()([bert_output, aulixiary_info])
+    #     print(out.shape)
     out = tf.keras.layers.Dense(1, activation="sigmoid")(out)
 
     model = tf.keras.models.Model(
@@ -54,6 +54,10 @@ def build_model(bert_model_name_or_path="vinai/phobert-base", max_len=384, n_hid
             bert_input_word_ids,
             bert_attention_mask,
             bert_token_type_ids,  # bert input
+            timestamp_post,
+            num_like_post,
+            num_comment_post,
+            num_share_post,
         ],
         outputs=out,
     )

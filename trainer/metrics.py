@@ -31,9 +31,11 @@ def get_labels(file_in, gold_indices=None):
             if label in label_map:
                 labels.append(label_map[label])
             else:
-                print("Error occurs at line {}. "
-                      "{} is not a label (only support UNINFORMATIVE and INFORMATIVE). "
-                      "Process terminated.".format(count + 1, label))
+                print(
+                    "Error occurs at line {}. "
+                    "{} is not a label (only support UNINFORMATIVE and INFORMATIVE). "
+                    "Process terminated.".format(count + 1, label)
+                )
                 sys.exit()
 
     return labels
@@ -107,24 +109,23 @@ def get_gold_indices(gold_indices_file):
 
 def score(input_dir, output_dir):
     # unzipped submission data is always in the 'res' subdirectory
-    submission_dir = os.path.join(input_dir, 'res')
+    submission_dir = os.path.join(input_dir, "res")
     submission_file = []
     for el in os.listdir(submission_dir):
-        if el.startswith('predictions'):
+        if el.startswith("predictions"):
             submission_file.append(el)
     if not len(submission_file) == 1:
         print(
-            "Warning: the submission folder should only contain 1 file (i.e., 'predictions.txt'). Process terminated.")
+            "Warning: the submission folder should only contain 1 file (i.e., 'predictions.txt'). Process terminated."
+        )
         sys.exit()
     submission_file_name = submission_file[0]
     submission_path = os.path.join(submission_dir, submission_file_name)
-    ground_truth_file = os.path.join(input_dir, 'ref', 'groundtruth_data.txt')
-    gold_indices_file = os.path.join(input_dir, 'ref', 'gold_indices.txt')
-    precision, recall, f1, accuracy = evaluate(
-        submission_path, ground_truth_file, gold_indices_file)
-    with open(os.path.join(output_dir, 'scores.txt'), 'w') as output_file:
-        output_file.write(
-            "F1-score:{}\nPrecision:{}\nRecall:{}\nAccuracy:{}\n".format(f1, precision, recall, accuracy))
+    ground_truth_file = os.path.join(input_dir, "ref", "groundtruth_data.txt")
+    gold_indices_file = os.path.join(input_dir, "ref", "gold_indices.txt")
+    precision, recall, f1, accuracy = evaluate(submission_path, ground_truth_file, gold_indices_file)
+    with open(os.path.join(output_dir, "scores.txt"), "w") as output_file:
+        output_file.write("F1-score:{}\nPrecision:{}\nRecall:{}\nAccuracy:{}\n".format(f1, precision, recall, accuracy))
 
 
 def main():
@@ -149,7 +150,7 @@ def precision_m(y_true, y_pred):
 def f1_m(y_true, y_pred):
     precision = precision_m(y_true, y_pred)
     recall = recall_m(y_true, y_pred)
-    return 2*((precision*recall)/(precision+recall+K.epsilon()))
+    return 2 * ((precision * recall) / (precision + recall + K.epsilon()))
 
 
 # if __name__ == "__main__":

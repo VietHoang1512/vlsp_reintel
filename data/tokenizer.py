@@ -1,14 +1,14 @@
 from vncorenlp import VnCoreNLP
 import logging
 import re
+
 # Disable all child loggers of urllib3, e.g. urllib3.connectionpool
 logging.getLogger("urllib3").propagate = False
 
 
-class VnCoreTokenizer():
+class VnCoreTokenizer:
     def __init__(self, path="vncorenlp/VnCoreNLP-1.1.1.jar"):
-        self.rdrsegmenter = VnCoreNLP(path,
-                                      annotators="wseg", max_heap_size='-Xmx500m')
+        self.rdrsegmenter = VnCoreNLP(path, annotators="wseg", max_heap_size="-Xmx500m")
 
     def tokenize(self, text: str, return_sentences=False) -> str:
         sentences = self.rdrsegmenter.tokenize(text)
@@ -18,12 +18,14 @@ class VnCoreTokenizer():
         output = ""
         for sentence in sentences:
             output += " ".join(sentence) + " "
-        
+
         return self._strip_white_space(output)
+
     def _strip_white_space(self, text):
         text = re.sub("\n+", "\n", text).strip()
         text = re.sub(" +", " ", text).strip()
         return text
+
 
 if __name__ == "__main__":
     tokenizer = VnCoreTokenizer("../vncorenlp/VnCoreNLP-1.1.1.jar")
