@@ -8,14 +8,14 @@ import os
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from tensorflow.keras import backend as K
-
 import transformers
+from tensorflow.keras import backend as K
+from transformers import AutoTokenizer
+
 from data.datasets import data_generator, regular_encode
 from data.text import tokenized_text_normalize, vlsp_impute
 from data.utils import seed_all
 from trainer.model import build_model, scheduler
-from transformers import AutoTokenizer
 
 print("Using Tensorflow version:", tf.__version__)
 print("Using Transformers version:", transformers.__version__)
@@ -124,8 +124,6 @@ if __name__ == "__main__":
         for fold in sorted(folds):
             print("*" * 100)
             print(f"FOLD: {fold+1}/{len(folds)}")
-            if fold < 4:
-                continue
             K.clear_session()
             with strategy.scope():
                 model = build_model(roberta, max_len=args.max_len)

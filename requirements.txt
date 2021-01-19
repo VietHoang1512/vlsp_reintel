@@ -1,0 +1,7 @@
+tensorflow==2.3.0
+vncorenlp
+tqdm
+sklearn
+seaborn
+matplotlib
+pandas
