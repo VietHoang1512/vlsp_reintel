@@ -21,7 +21,7 @@ print("Using Tensorflow version:", tf.__version__)
 print("Using Transformers version:", transformers.__version__)
 
 parser = argparse.ArgumentParser()
-
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 parser.add_argument(
     "--train_file",
@@ -98,7 +98,14 @@ args = parser.parse_args()
 if __name__ == "__main__":
     #
     seed_all(args.seed)
+    gpus = tf.config.experimental.list_physical_devices("GPU")
+    if gpus:
+        try:
+            for gpu in gpus:
+                tf.config.experimental.set_memory_growth(gpu, True)
 
+        except RuntimeError as e:
+            print(e)
     # Load and process data
     train_df = pd.read_csv(args.train_file)
     test_df = pd.read_csv(args.test_file)
